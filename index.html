@@ -53,17 +53,27 @@ button{border:0;border-radius:9px;padding:11px 15px;font-weight:800;cursor:point
 .hidden{display:none !important}
 .muted{color:var(--muted)}
 
-.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px}
+.legend-item{border:1px solid var(--line);border-radius:12px;padding:12px;font-size:.75rem;line-height:1.5}
+.legend-item .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.legend-item.green .dot{background:var(--green)}
+.legend-item.yellow .dot{background:#eab308}
+.legend-item.orange .dot{background:var(--orange)}
+.legend-item.red .dot{background:var(--red)}
+.legend-item b{display:block;margin-bottom:3px}
 .kpi{border:1px solid var(--line);border-radius:13px;padding:15px}
 .kpi strong{display:block;font-size:1.5rem}
 .badge{display:inline-block;border-radius:999px;padding:4px 8px;font-size:.7rem;font-weight:900}
 .red{background:#fee2e2;color:#991b1b}
 .orange{background:#ffedd5;color:#9a3412}
 .green{background:#d1fae5;color:#065f46}
+.yellow{background:#fef9c3;color:#854d0e}
 .blue{background:#dbeafe;color:#1e40af}
 [data-theme="dark"] .red{background:#7f1d1d55;color:#fca5a5}
 [data-theme="dark"] .orange{background:#7c2d1255;color:#fdba74}
 [data-theme="dark"] .green{background:#064e3b55;color:#6ee7b7}
+[data-theme="dark"] .yellow{background:#713f1255;color:#fde047}
 [data-theme="dark"] .blue{background:#1e3a8a55;color:#93c5fd}
 
 .progress{height:9px;background:var(--line);border-radius:9px;overflow:hidden}
@@ -138,7 +148,7 @@ footer{max-width:1250px;margin:20px auto 0;padding:18px 16px 10px;color:var(--mu
 <div><label data-i18n="lblEmail">E-mail officiel</label><input id="email" placeholder="contact@exemple.fr"></div>
 <div><label data-i18n="lblPhone">Téléphone</label><input id="phone" placeholder="+33 ..."></div>
 <div><label data-i18n="lblSiren">SIREN / identifiant</label><input id="siren" placeholder="123456789"></div>
-<div><label data-i18n="lblThreshold">Seuil d'alerte</label>
+<div><label data-i18n="lblThreshold">Seuil de similarité (niveau rouge)</label>
 <select id="threshold">
 <option value="70" data-i18n="thBalanced">70 — équilibré</option>
 <option value="50" data-i18n="thSensitive">50 — sensible</option>
@@ -160,11 +170,18 @@ footer{max-width:1250px;margin:20px auto 0;padding:18px 16px 10px;color:var(--mu
 
 <section id="dash" class="hidden">
 <div class="kpis">
-<div class="kpi"><span class="muted" data-i18n="kpiRisk">Risque global</span><strong id="risk">—</strong><span id="riskBadge"></span></div>
-<div class="kpi"><span class="muted" data-i18n="kpiCandidates">Candidats</span><strong id="candidateCount">0</strong></div>
+<div class="kpi"><span class="muted" data-i18n="kpiRisk">Statut global</span><strong id="risk">—</strong><span id="riskBadge"></span></div>
+<div class="kpi"><span class="muted" data-i18n="kpiCandidates">Candidats générés</span><strong id="candidateCount">0</strong></div>
 <div class="kpi"><span class="muted" data-i18n="kpiExisting">Domaines existants</span><strong id="existing">0</strong></div>
 <div class="kpi"><span class="muted" data-i18n="kpiCerts">Certificats trouvés</span><strong id="certs">0</strong></div>
-<div class="kpi"><span class="muted" data-i18n="kpiAlerts">Alertes</span><strong id="alerts">0</strong></div>
+<div class="kpi"><span class="muted" data-i18n="kpiSuspects">Suspects</span><strong id="suspects">0</strong></div>
+<div class="kpi"><span class="muted" data-i18n="kpiAlerts">Menaces confirmées</span><strong id="alerts">0</strong></div>
+</div>
+<div class="legend">
+<div class="legend-item green"><b><span class="dot"></span><span data-i18n="legendGreenTitle">🟢 Non enregistré</span></b><span data-i18n="legendGreenText">Le candidat n'existe pas (RDAP). Aucun indicateur actif.</span></div>
+<div class="legend-item yellow"><b><span class="dot"></span><span data-i18n="legendYellowTitle">🟡 À surveiller</span></b><span data-i18n="legendYellowText">Le domaine existe, mais sans autre signal suspect pour l'instant.</span></div>
+<div class="legend-item orange"><b><span class="dot"></span><span data-i18n="legendOrangeTitle">🟠 Suspect</span></b><span data-i18n="legendOrangeText">Le domaine existe et présente un signal suspect (certificat HTTPS et/ou mot-clé type "secure", "login"…). Investigation recommandée.</span></div>
+<div class="legend-item red"><b><span class="dot"></span><span data-i18n="legendRedTitle">🔴 Menace confirmée</span></b><span data-i18n="legendRedText">Domaine existant + certificat + mot-clé suspect + très forte similarité. Action prioritaire.</span></div>
 </div>
 
 <section class="card">
@@ -296,10 +313,17 @@ const I18N = {
   license2:"Ce site et son code source sont mis à disposition à titre de démonstration. Toute réutilisation, reproduction, distribution ou modification, en tout ou partie, à des fins commerciales ou non, nécessite l'accord écrit préalable de l'auteur.",
   license3:"Vous souhaitez publier ce projet sous une licence open source (MIT, Apache 2.0, etc.) ? Remplacez ce texte par les termes de la licence choisie.",
   rdapExists:"✓ existe", rdapFree:"— libre", rdapUnknown:"?",
-  statusCritical:"🔴 critique", statusReview:"🟠 à vérifier", statusLow:"🟢 faible",
-  riskHigh:"RISQUE ÉLEVÉ", riskWatch:"SURVEILLANCE", riskLow:"FAIBLE",
-  alertLabel:"ALERTE", alertVerify:"Vérifier avant toute action de takedown.",
+  statusNotRegistered:"🟢 non enregistré", statusMonitor:"🟡 à surveiller", statusSuspect:"🟠 suspect", statusConfirmed:"🔴 menace confirmée",
+  riskHigh:"MENACE CONFIRMÉE", riskWatch:"SUSPECT DÉTECTÉ", riskMonitorLabel:"DOMAINES EXISTANTS À SURVEILLER", riskLow:"AUCUNE MENACE CONFIRMÉE",
+  alertLabel:"MENACE", suspectLabel:"SUSPECT", alertVerify:"Vérifier avant toute action de takedown.",
   noAlertThreshold:"Aucune alerte au-dessus du seuil.",
+  kpiSuspects:"Suspects",
+  legendGreenTitle:"🟢 Non enregistré", legendGreenText:"Le candidat n'existe pas (RDAP). Aucun indicateur actif.",
+  legendYellowTitle:"🟡 À surveiller", legendYellowText:"Le domaine existe, mais sans autre signal suspect pour l'instant.",
+  legendOrangeTitle:"🟠 Suspect", legendOrangeText:"Le domaine existe et présente un signal suspect (certificat HTTPS et/ou mot-clé type \"secure\", \"login\"…). Investigation recommandée.",
+  legendRedTitle:"🔴 Menace confirmée", legendRedText:"Domaine existant + certificat + mot-clé suspect + très forte similarité. Action prioritaire.",
+  incidentsConfirmedTitle:"Menaces confirmées", incidentsSuspectTitle:"Domaines suspects à surveiller",
+  noConfirmed:"Aucune menace confirmée pour l'instant.", noSuspects:"Aucun domaine suspect détecté.",
   errRun:"Impossible de lancer l'analyse : ",
   savedProfile:"Profil sauvegardé localement.", noProfile:"Aucun profil sauvegardé.",
   verifying:"Vérification"
@@ -347,10 +371,17 @@ const I18N = {
   license2:"This site and its source code are provided for demonstration purposes. Any reuse, reproduction, distribution or modification, in whole or in part, for commercial or non-commercial purposes, requires the author's prior written consent.",
   license3:"Want to publish this project under an open-source license (MIT, Apache 2.0, etc.)? Replace this text with the terms of the chosen license.",
   rdapExists:"✓ exists", rdapFree:"— available", rdapUnknown:"?",
-  statusCritical:"🔴 critical", statusReview:"🟠 to review", statusLow:"🟢 low",
-  riskHigh:"HIGH RISK", riskWatch:"MONITOR", riskLow:"LOW",
-  alertLabel:"ALERT", alertVerify:"Verify before any takedown action.",
+  statusNotRegistered:"🟢 not registered", statusMonitor:"🟡 to monitor", statusSuspect:"🟠 suspicious", statusConfirmed:"🔴 confirmed threat",
+  riskHigh:"CONFIRMED THREAT", riskWatch:"SUSPICIOUS DOMAIN DETECTED", riskMonitorLabel:"EXISTING DOMAINS TO MONITOR", riskLow:"NO CONFIRMED THREAT",
+  alertLabel:"THREAT", suspectLabel:"SUSPECT", alertVerify:"Verify before any takedown action.",
   noAlertThreshold:"No alerts above the threshold.",
+  kpiSuspects:"Suspicious",
+  legendGreenTitle:"🟢 Not registered", legendGreenText:"The candidate does not exist (RDAP). No active indicator.",
+  legendYellowTitle:"🟡 To monitor", legendYellowText:"The domain exists, but with no other suspicious signal for now.",
+  legendOrangeTitle:"🟠 Suspicious", legendOrangeText:"The domain exists and shows a suspicious signal (HTTPS certificate and/or a keyword like \"secure\", \"login\"…). Investigation recommended.",
+  legendRedTitle:"🔴 Confirmed threat", legendRedText:"Existing domain + certificate + suspicious keyword + very high similarity. Priority action.",
+  incidentsConfirmedTitle:"Confirmed threats", incidentsSuspectTitle:"Suspicious domains to monitor",
+  noConfirmed:"No confirmed threat for now.", noSuspects:"No suspicious domain detected.",
   errRun:"Could not run the analysis: ",
   savedProfile:"Profile saved locally.", noProfile:"No saved profile.",
   verifying:"Checking"
@@ -455,12 +486,24 @@ async function ct(q){
   let j=await r.json();return Array.isArray(j)?j:[]
  }catch(e){return []}
 }
+const SUSPICIOUS_KEYWORDS=["secure","support","login","payment","pay","service","conseil","official","verify","account","signin","update"];
+function hasSuspiciousKeyword(d){return SUSPICIOUS_KEYWORDS.some(k=>d.toLowerCase().includes(k))}
+// 4-level classification: candidat généré -> domaine existant -> suspect -> menace confirmée
+function classify(x, highSimThreshold){
+ const exists = x.rdap===true;
+ if(!exists) return "green";
+ const keyword = hasSuspiciousKeyword(x.domain);
+ const highSim = x.sim >= highSimThreshold;
+ if(x.ct && keyword && highSim) return "red";
+ if(x.ct || keyword) return "orange";
+ return "yellow";
+}
 function setStatus(x){document.getElementById("status").textContent=x}
 function row(x){
  const dict=I18N[currentLang];
- let cls=x.score>=85?"red":x.score>=Number(document.getElementById("threshold").value)?"orange":"green";
+ const cls=x.level;
  let rdapTxt = x.rdap===true?dict.rdapExists:x.rdap===false?dict.rdapFree:dict.rdapUnknown;
- let statusTxt = x.score>=85?dict.statusCritical:x.score>=70?dict.statusReview:dict.statusLow;
+ let statusTxt = {green:dict.statusNotRegistered,yellow:dict.statusMonitor,orange:dict.statusSuspect,red:dict.statusConfirmed}[cls];
  return `<tr><td><b>${x.domain}</b></td><td>${x.source}</td><td>${rdapTxt}</td><td>${x.ct?"✓":"—"}</td><td>${x.sim}%</td><td><span class="badge ${cls}">${x.score}/100</span></td><td>${statusTxt}</td></tr>`
 }
 async function run(){
@@ -471,21 +514,40 @@ async function run(){
   state.started=new Date().toISOString();state.candidates=variants(b).map(v=>v+".com");
   document.getElementById("dash").classList.remove("hidden");setStatus(dict.statusAnalysis);document.getElementById("candidateCount").textContent=state.candidates.length;
   let ctData=await ct(d);document.getElementById("certs").textContent=ctData.length;
-  let rows=[];let existing=0,alerts=0;
+  let rows=[];let existing=0,suspects=0,confirmed=0;
+  const highSimThreshold=Number(document.getElementById("threshold").value);
   for(let i=0;i<state.candidates.length;i++){
    let cd=state.candidates[i], r=await rdap(cd), s=sim(b,cd.split(".")[0]);
-   let score=Math.min(99,Math.max(1,s+(r.exists===true?10:0)+(ctData.some(z=>(z.name_value||"").toLowerCase().includes(cd))?10:0)));
-   let x={domain:cd,source:currentLang==="fr"?"générateur V3":"V3 generator",rdap:r.exists,ct:ctData.some(z=>(z.name_value||"").toLowerCase().includes(cd)),sim:s,score};
-   state.results.push(x);if(r.exists===true)existing++;if(score>=state.profile.threshold)alerts++;
+   let hasCt=ctData.some(z=>(z.name_value||"").toLowerCase().includes(cd));
+   let score=Math.min(99,Math.max(1,s+(r.exists===true?10:0)+(hasCt?10:0)));
+   let x={domain:cd,source:currentLang==="fr"?"générateur V3":"V3 generator",rdap:r.exists,ct:hasCt,sim:s,score};
+   x.level=classify(x,highSimThreshold);
+   state.results.push(x);
+   if(r.exists===true)existing++;
+   if(x.level==="orange")suspects++;
+   if(x.level==="red")confirmed++;
    rows.push(row(x));document.getElementById("results").innerHTML=rows.join("");
    document.getElementById("bar").style.width=Math.round((i+1)/state.candidates.length*100)+"%";
    document.getElementById("progressText").textContent=`${dict.verifying} ${i+1}/${state.candidates.length} — ${cd}`;
   }
-  document.getElementById("existing").textContent=existing;document.getElementById("alerts").textContent=alerts;
-  let top=state.results.length?Math.max(...state.results.map(x=>x.score)):0;
-  document.getElementById("risk").textContent=top+"/100";
-  document.getElementById("riskBadge").innerHTML=`<span class="badge ${top>=85?"red":top>=70?"orange":"green"}">${top>=85?dict.riskHigh:top>=70?dict.riskWatch:dict.riskLow}</span>`;
-  document.getElementById("incidents").innerHTML=state.results.filter(x=>x.score>=state.profile.threshold).slice(0,12).map(x=>`<p><span class="badge red">${dict.alertLabel}</span> <b>${x.domain}</b> — ${x.score}/100. <span class="muted">${dict.alertVerify}</span></p>`).join("")||dict.noAlertThreshold;
+  document.getElementById("existing").textContent=existing;
+  document.getElementById("suspects").textContent=suspects;
+  document.getElementById("alerts").textContent=confirmed;
+  let statusLabel, statusCls;
+  if(confirmed>0){statusLabel=dict.riskHigh;statusCls="red"}
+  else if(suspects>0){statusLabel=dict.riskWatch;statusCls="orange"}
+  else if(existing>0){statusLabel=dict.riskMonitorLabel;statusCls="yellow"}
+  else {statusLabel=dict.riskLow;statusCls="green"}
+  document.getElementById("risk").textContent = confirmed + (currentLang==="fr" ? " confirmée(s)" : " confirmed");
+  document.getElementById("riskBadge").innerHTML=`<span class="badge ${statusCls}">${statusLabel}</span>`;
+  const confirmedList = state.results.filter(x=>x.level==="red");
+  const suspectList = state.results.filter(x=>x.level==="orange");
+  let incidentsHtml = "";
+  incidentsHtml += `<p><strong>${dict.incidentsConfirmedTitle}</strong> (${confirmedList.length})</p>`;
+  incidentsHtml += confirmedList.length ? confirmedList.slice(0,12).map(x=>`<p><span class="badge red">${dict.alertLabel}</span> <b>${x.domain}</b> — ${x.score}/100. <span class="muted">${dict.alertVerify}</span></p>`).join("") : `<p class="muted">${dict.noConfirmed}</p>`;
+  incidentsHtml += `<p style="margin-top:10px"><strong>${dict.incidentsSuspectTitle}</strong> (${suspectList.length})</p>`;
+  incidentsHtml += suspectList.length ? suspectList.slice(0,12).map(x=>`<p><span class="badge orange">${dict.suspectLabel}</span> <b>${x.domain}</b> — ${x.score}/100.</p>`).join("") : `<p class="muted">${dict.noSuspects}</p>`;
+  document.getElementById("incidents").innerHTML = incidentsHtml;
   setStatus(dict.statusDone);
  }catch(e){alert(dict.errRun+e.message);setStatus(dict.statusError)}
 }
