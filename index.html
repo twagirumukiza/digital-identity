@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DIP V3 — Digital Identity Protection</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--text:#142033;--muted:#64748b;--line:#dfe6ef;--blue:#2563eb;--red:#dc2626;--orange:#d97706;--green:#059669}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial}
+header{background:#0f172a;color:#fff;padding:20px 4%;display:flex;justify-content:space-between;gap:20px;align-items:center}h1{margin:0;font-size:22px}header small{color:#cbd5e1}
+main{max-width:1250px;margin:25px auto;padding:0 16px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 8px 30px #00000008}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.span2{grid-column:span 2}
+label{font-size:12px;font-weight:800;color:var(--muted);display:block;margin-bottom:5px}input,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;background:#fff}button{border:0;border-radius:9px;padding:11px 15px;font-weight:800;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e8eefc;color:#1d4ed8}.danger{background:#fee2e2;color:#991b1b}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.hidden{display:none}.muted{color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.kpi{border:1px solid var(--line);border-radius:13px;padding:15px}.kpi strong{display:block;font-size:25px}
+.badge{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900}.red{background:#fee2e2;color:#991b1b}.orange{background:#ffedd5;color:#9a3412}.green{background:#d1fae5;color:#065f46}.blue{background:#dbeafe;color:#1e40af}
+.progress{height:9px;background:#e5e7eb;border-radius:9px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--blue);transition:.3s}
+table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);font-size:12px;text-align:left}th{color:var(--muted)}
+.notice{padding:11px;border-radius:10px;background:#eff6ff;color:#1e40af;font-size:12px}.warning{background:#fff7ed;color:#9a3412}
+pre{white-space:pre-wrap;background:#0b1220;color:#dbeafe;padding:14px;border-radius:10px;font-size:12px;overflow:auto}
+footer{max-width:1250px;margin:auto;padding:10px 16px 35px;color:var(--muted);font-size:11px}
+@media(max-width:900px){.grid,.kpis{grid-template-columns:1fr 1fr}.span2{grid-column:span 2}}@media(max-width:560px){.grid,.kpis{grid-template-columns:1fr}.span2{grid-column:auto}}
+</style>
+</head>
+<body>
+<header><div><h1>🛡️ Digital Identity Protection V3</h1><small>Veille domaines · RDAP · Certificate Transparency · scoring · incidents</small></div><strong id="status">PRÊT</strong></header>
+<main>
+<section class="card">
+<h2>1. Définir l'identité à protéger</h2>
+<div class="grid">
+<div class="span2"><label>URL officielle *</label><input id="url" placeholder="https://www.exemple.fr"></div>
+<div><label>Nom / marque</label><input id="brand" placeholder="Ex. Twagirumukiza"></div>
+<div><label>E-mail officiel</label><input id="email" placeholder="contact@exemple.fr"></div>
+<div><label>Téléphone</label><input id="phone" placeholder="+33 ..."></div>
+<div><label>SIREN / identifiant</label><input id="siren" placeholder="123456789"></div>
+<div><label>Seuil d'alerte</label><select id="threshold"><option value="70">70 — équilibré</option><option value="50">50 — sensible</option><option value="85">85 — strict</option></select></div>
+<div><label>Mode</label><select id="mode"><option value="live">Live — sources publiques</option><option value="demo">Démo — données simulées</option></select></div>
+</div>
+<div class="actions"><button class="primary" onclick="run()">🔍 Lancer l'analyse V3</button><button class="secondary" onclick="saveProfile()">💾 Sauvegarder le profil</button><button class="secondary" onclick="loadProfile()">↻ Charger</button></div>
+<div id="notice" class="notice" style="margin-top:12px">La V3 peut interroger des sources publiques depuis le navigateur quand elles autorisent les requêtes cross-origin. Pour une surveillance permanente, il faut un backend/worker.</div>
+</section>
+
+<section id="dash" class="hidden">
+<div class="kpis">
+<div class="kpi"><span class="muted">Risque global</span><strong id="risk">—</strong><span id="riskBadge"></span></div>
+<div class="kpi"><span class="muted">Candidats</span><strong id="candidateCount">0</strong></div>
+<div class="kpi"><span class="muted">Domaines existants</span><strong id="existing">0</strong></div>
+<div class="kpi"><span class="muted">Certificats trouvés</span><strong id="certs">0</strong></div>
+<div class="kpi"><span class="muted">Alertes</span><strong id="alerts">0</strong></div>
+</div>
+
+<section class="card">
+<h2>2. Génération & vérification</h2>
+<div class="progress"><i id="bar"></i></div><p id="progressText" class="muted">En attente.</p>
+<table><thead><tr><th>Candidat</th><th>Source</th><th>RDAP</th><th>CT</th><th>Similarité</th><th>Score</th><th>Statut</th></tr></thead>
+<tbody id="results"></tbody></table>
+</section>
+
+<section class="card">
+<h2>3. Alertes / incidents</h2>
+<div id="incidents" class="muted">Aucune alerte.</div>
+<div class="actions"><button class="secondary" onclick="exportReport()">⬇ Exporter le rapport JSON</button><button class="danger" onclick="clearData()">Effacer les données locales</button></div>
+</section>
+
+<section class="card">
+<h2>4. Connecteur Cloudflare Brand Protection (optionnel)</h2>
+<p class="muted">La V3 prépare le branchement à l'API Brand Protection. La clé API ne doit jamais être intégrée dans un site statique public : utiliser un backend/worker avec secret.</p>
+<div class="grid">
+<div class="span2"><label>Endpoint backend proxy</label><input id="proxy" placeholder="https://votre-api.example/brand-protection"></div>
+<div><label>Tag de surveillance</label><input id="tag" placeholder="ma-marque"></div>
+</div>
+</section>
+</section>
+</main>
+<footer>
+Prototype V3. Les appels RDAP/CT sont best-effort depuis le navigateur et dépendent des politiques CORS et de la disponibilité des services. Les résultats ne constituent pas une preuve juridique d'usurpation. Une surveillance 24/7 nécessite un backend planifié, stockage historique, alerting et connecteurs autorisés.
+</footer>
+
+<script>
+const state={profile:{},candidates:[],results:[],started:null};
+const conf={а:"a",ɑ:"a",α:"a",с:"c",ϲ:"c",е:"e",ε:"e",о:"o",ο:"o",р:"p",ρ:"p",ѕ:"s",і:"i",ι:"i",ⅼ:"l",ӏ:"l"};
+function norm(s){return (s||"").toLowerCase().normalize("NFKC").replace(/[^\p{L}\p{N}-]/gu,"")}
+function urlObj(){let x=document.getElementById("url").value.trim();if(!/^https?:\/\//i.test(x))x="https://"+x;return new URL(x)}
+function domain(){return urlObj().hostname.replace(/^www\./,"").toLowerCase()}
+function base(){return domain().split(".")[0]}
+function sim(a,b){a=norm(a);b=norm(b);let d=Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));for(let i=0;i<=a.length;i++)d[i][0]=i;for(let j=0;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return Math.round((1-d[a.length][b.length]/Math.max(a.length,b.length,1))*100)}
+function variants(b){
+ let s=new Set(), chars=b.split("");
+ for(let i=0;i<b.length;i++){s.add(b.slice(0,i)+b.slice(i+1));s.add(b.slice(0,i)+b[i]+b.slice(i));if(i+1<b.length)s.add(b.slice(0,i)+b[i+1]+b[i]+b.slice(i+2))}
+ ["secure","support","login","payment","pay","service","conseil","official","verify"].forEach(x=>{s.add(b+"-"+x);s.add(x+"-"+b)});
+ for(let i=0;i<b.length;i++){let arr=chars.slice();if(conf[arr[i]]){arr[i]=Object.keys(conf).find(k=>conf[k]===arr[i])||arr[i];s.add(arr.join(""))}}
+ return [...s].filter(x=>x&&x!==b).slice(0,120)
+}
+async function rdap(d){
+ try{
+  let r=await fetch("https://rdap.org/domain/"+encodeURIComponent(d),{headers:{"Accept":"application/rdap+json"}});
+  if(!r.ok)return {exists:false};
+  let j=await r.json();return {exists:true,status:j.status||[],events:j.events||[],registrar:(j.entities||[]).map(e=>e.roles||[]).flat().includes("registrar")};
+ }catch(e){return {exists:null,error:"CORS/API indisponible"}}
+}
+async function ct(q){
+ try{
+  let r=await fetch("https://crt.sh/?q="+encodeURIComponent("%."+q)+"&output=json");if(!r.ok)return [];
+  let j=await r.json();return Array.isArray(j)?j:[]
+ }catch(e){return []}
+}
+function setStatus(x){document.getElementById("status").textContent=x}
+function row(x){
+ let cls=x.score>=85?"red":x.score>=Number(document.getElementById("threshold").value)?"orange":"green";
+ return `<tr><td><b>${x.domain}</b></td><td>${x.source}</td><td>${x.rdap===true?"✓ existe":x.rdap===false?"— libre":"?"}</td><td>${x.ct?"✓":"—"}</td><td>${x.sim}%</td><td><span class="badge ${cls}">${x.score}/100</span></td><td>${x.score>=85?"🔴 critique":x.score>=70?"🟠 à vérifier":"🟢 faible"}</td></tr>`
+}
+async function run(){
+ try{
+  let u=urlObj(), d=domain(), b=base();
+  state.profile={url:u.href,domain:d,brand:document.getElementById("brand").value.trim()||b,email:document.getElementById("email").value.trim(),phone:document.getElementById("phone").value.trim(),siren:document.getElementById("siren").value.trim(),threshold:+document.getElementById("threshold").value};
+  state.started=new Date().toISOString();state.candidates=variants(b).map(v=>v+".com");
+  document.getElementById("dash").classList.remove("hidden");setStatus("ANALYSE");document.getElementById("candidateCount").textContent=state.candidates.length;
+  let ctData=await ct(d);document.getElementById("certs").textContent=ctData.length;
+  let rows=[];let existing=0,alerts=0;
+  for(let i=0;i<state.candidates.length;i++){
+   let cd=state.candidates[i], r=await rdap(cd), s=sim(b,cd.split(".")[0]);
+   let score=Math.min(99,Math.max(1,s+(r.exists===true?10:0)+(ctData.some(z=>(z.name_value||"").toLowerCase().includes(cd))?10:0)));
+   let x={domain:cd,source:"générateur V3",rdap:r.exists,ct:ctData.some(z=>(z.name_value||"").toLowerCase().includes(cd)),sim:s,score};
+   state.results.push(x);if(r.exists===true)existing++;if(score>=state.profile.threshold)alerts++;
+   rows.push(row(x));document.getElementById("results").innerHTML=rows.join("");
+   document.getElementById("bar").style.width=Math.round((i+1)/state.candidates.length*100)+"%";
+   document.getElementById("progressText").textContent=`Vérification ${i+1}/${state.candidates.length} — ${cd}`;
+  }
+  document.getElementById("existing").textContent=existing;document.getElementById("alerts").textContent=alerts;
+  let top=state.results.length?Math.max(...state.results.map(x=>x.score)):0;
+  document.getElementById("risk").textContent=top+"/100";
+  document.getElementById("riskBadge").innerHTML=`<span class="badge ${top>=85?"red":top>=70?"orange":"green"}">${top>=85?"RISQUE ÉLEVÉ":top>=70?"SURVEILLANCE":"FAIBLE"}</span>`;
+  document.getElementById("incidents").innerHTML=state.results.filter(x=>x.score>=state.profile.threshold).slice(0,12).map(x=>`<p><span class="badge red">ALERTE</span> <b>${x.domain}</b> — score ${x.score}/100. <span class="muted">Vérifier avant toute action de takedown.</span></p>`).join("")||"Aucune alerte au-dessus du seuil.";
+  setStatus("TERMINÉ");
+ }catch(e){alert("Impossible de lancer l'analyse : "+e.message);setStatus("ERREUR")}
+}
+function saveProfile(){localStorage.setItem("dipv3-profile",JSON.stringify({url:document.getElementById("url").value,brand:document.getElementById("brand").value,email:document.getElementById("email").value,phone:document.getElementById("phone").value,siren:document.getElementById("siren").value}));alert("Profil sauvegardé localement.")}
+function loadProfile(){let x=JSON.parse(localStorage.getItem("dipv3-profile")||"null");if(!x){alert("Aucun profil sauvegardé.");return}for(let k of ["url","brand","email","phone","siren"])document.getElementById(k).value=x[k]||""}
+function exportReport(){let r={product:"Digital Identity Protection",version:"3.0",generated_at:new Date().toISOString(),profile:state.profile,results:state.results,limitations:"Best-effort browser checks; CORS and service availability apply."};let b=new Blob([JSON.stringify(r,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="DIP-V3-rapport.json";a.click()}
+function clearData(){localStorage.removeItem("dipv3-profile");location.reload()}
+</script>
+</body>
+</html>
