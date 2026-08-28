@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DIP — Scan gratuit</title>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body>
+<header>
+  <a class="brand-link" href="../">
+    <div class="brand">
+      <h1 data-i18n="title">🛡️ Digital Identity Protection</h1>
+      <small data-i18n="subtitle">Scan gratuit · 1 TLD · 25 candidats</small>
+    </div>
+  </a>
+  <button class="burger" id="burgerBtn" aria-label="Menu" aria-expanded="false">☰</button>
+  <nav class="toolbar" id="toolbar">
+    <a class="tool-btn" href="../app/" data-i18n="navApp">Espace client</a>
+    <div class="fontgrp" role="group" aria-label="Taille du texte">
+      <button id="fontMinus">A-</button><button id="fontReset">A</button><button id="fontPlus">A+</button>
+    </div>
+    <button class="tool-btn" id="themeToggle">🌙 Sombre</button>
+    <div class="fontgrp" role="group" aria-label="Langue">
+      <button class="tool-btn" id="langFR">FR</button><button class="tool-btn" id="langEN">EN</button>
+    </div>
+    <strong id="status" data-i18n="statusReady">PRÊT</strong>
+  </nav>
+</header>
+<main>
+<section class="card">
+<h2 data-i18n="step1Title">1. Tester votre identité (gratuit)</h2>
+<div class="notice" data-i18n="demoNotice">Version gratuite : 1 seule extension (.com), 25 candidats maximum, aucun historique ni alerte. Pour une surveillance complète et planifiée, voir l'espace client.</div>
+<div class="grid" style="margin-top:12px">
+<div class="span2"><label data-i18n="lblUrl">URL officielle *</label><input id="url" placeholder="https://www.exemple.fr"></div>
+</div>
+<div class="actions">
+<button class="primary" onclick="runDemo()" data-i18n="btnRun">🔍 Lancer le scan gratuit</button>
+<a class="secondary" href="../#pricing" style="display:inline-flex;align-items:center;padding:11px 15px;border-radius:9px;text-decoration:none;font-weight:800;font-size:.875rem" data-i18n="btnUpgrade">Voir les forfaits</a>
+</div>
+</section>
+
+<section id="dash" class="hidden">
+<div class="kpis">
+<div class="kpi"><span class="muted" data-i18n="kpiCandidates">Candidats testés</span><strong id="candidateCount">0</strong></div>
+<div class="kpi"><span class="muted" data-i18n="kpiExisting">Domaines existants</span><strong id="existing">0</strong></div>
+<div class="kpi"><span class="muted" data-i18n="kpiSuspects">Suspects</span><strong id="suspects">0</strong></div>
+<div class="kpi"><span class="muted" data-i18n="kpiAlerts">Menaces confirmées</span><strong id="alerts">0</strong></div>
+</div>
+<div class="legend">
+<div class="legend-item green"><b><span class="dot"></span><span data-i18n="legendGreenTitle">🟢 Non enregistré</span></b><span data-i18n="legendGreenText">Le candidat n'existe pas. Aucun indicateur actif.</span></div>
+<div class="legend-item yellow"><b><span class="dot"></span><span data-i18n="legendYellowTitle">🟡 À surveiller</span></b><span data-i18n="legendYellowText">Le domaine existe, sans autre signal suspect.</span></div>
+<div class="legend-item orange"><b><span class="dot"></span><span data-i18n="legendOrangeTitle">🟠 Suspect</span></b><span data-i18n="legendOrangeText">Domaine existant + un signal suspect (certificat, mot-clé, DNS actif).</span></div>
+<div class="legend-item red"><b><span class="dot"></span><span data-i18n="legendRedTitle">🔴 Menace confirmée</span></b><span data-i18n="legendRedText">Similarité forte + au moins 2 signaux suspects sur 3.</span></div>
+</div>
+
+<section class="card">
+<h2 data-i18n="step2Title">2. Résultats</h2>
+<table><thead><tr>
+<th data-i18n="thCandidate">Candidat</th><th>RDAP</th><th>CT</th><th>DNS</th>
+<th data-i18n="thSim">Similarité</th><th data-i18n="thScore">Score</th><th data-i18n="thStatus">Statut</th>
+</tr></thead><tbody id="results"></tbody></table>
+</section>
+</section>
+
+<section class="card" id="upsell">
+<h2 data-i18n="upsellTitle">Besoin de plus ?</h2>
+<p class="muted" data-i18n="upsellText">La version gratuite s'arrête à un scan ponctuel sur .com. L'espace client ajoute la surveillance planifiée (cron), l'historique dans le temps, les alertes e-mail/Slack automatiques, plusieurs extensions, la whitelist et l'export PDF.</p>
+<div class="actions">
+<a class="primary" href="../app/" style="display:inline-flex;align-items:center;padding:11px 15px;border-radius:9px;text-decoration:none" data-i18n="btnCreateAccount">Créer un compte</a>
+<a class="secondary" href="../#pricing" style="display:inline-flex;align-items:center;padding:11px 15px;border-radius:9px;text-decoration:none;font-weight:800;font-size:.875rem" data-i18n="btnSeePricing">Voir les tarifs</a>
+</div>
+</section>
+</main>
+
+<footer>
+  <div class="footer-top">
+    <div class="signature" data-i18n="signature">Conçu et développé par <span>Twagirumukiza</span></div>
+    <div class="footer-links">
+      <a id="linkLegal" data-i18n="linkLegal">Mentions légales</a>
+      <a id="linkCGU" data-i18n="linkCGU">CGU</a>
+      <a id="linkLicense" data-i18n="linkLicense">Licence</a>
+    </div>
+  </div>
+  <div class="footer-legal" data-i18n="footerNote">Résultats best-effort, sans garantie d'exhaustivité. Ne constituent pas une preuve juridique d'usurpation.</div>
+  <div class="footer-legal" style="margin-top:6px" data-i18n="copyright">© 2026 Twagirumukiza. Tous droits réservés.</div>
+</footer>
+
+<div id="legalModals"></div>
+
+<script src="../assets/i18n-legal.js"></script>
+<script>
+window.PAGE_I18N = {
+ fr: {
+  title:"🛡️ Digital Identity Protection", subtitle:"Scan gratuit · 1 TLD · 25 candidats",
+  navApp:"Espace client", statusReady:"PRÊT", statusRunning:"ANALYSE", statusDone:"TERMINÉ", statusError:"ERREUR",
+  step1Title:"1. Tester votre identité (gratuit)",
+  demoNotice:"Version gratuite : 1 seule extension (.com), 25 candidats maximum, aucun historique ni alerte. Pour une surveillance complète et planifiée, voir l'espace client.",
+  lblUrl:"URL officielle *", btnRun:"🔍 Lancer le scan gratuit", btnUpgrade:"Voir les forfaits",
+  kpiCandidates:"Candidats testés", kpiExisting:"Domaines existants", kpiSuspects:"Suspects", kpiAlerts:"Menaces confirmées",
+  legendGreenTitle:"🟢 Non enregistré", legendGreenText:"Le candidat n'existe pas. Aucun indicateur actif.",
+  legendYellowTitle:"🟡 À surveiller", legendYellowText:"Le domaine existe, sans autre signal suspect.",
+  legendOrangeTitle:"🟠 Suspect", legendOrangeText:"Domaine existant + un signal suspect (certificat, mot-clé, DNS actif).",
+  legendRedTitle:"🔴 Menace confirmée", legendRedText:"Similarité forte + au moins 2 signaux suspects sur 3.",
+  step2Title:"2. Résultats", thCandidate:"Candidat", thSim:"Similarité", thScore:"Score", thStatus:"Statut",
+  upsellTitle:"Besoin de plus ?",
+  upsellText:"La version gratuite s'arrête à un scan ponctuel sur .com. L'espace client ajoute la surveillance planifiée (cron), l'historique dans le temps, les alertes e-mail/Slack automatiques, plusieurs extensions, la whitelist et l'export PDF.",
+  btnCreateAccount:"Créer un compte", btnSeePricing:"Voir les tarifs",
+  statusNotRegistered:"🟢 non enregistré", statusMonitor:"🟡 à surveiller", statusSuspect:"🟠 suspect", statusConfirmed:"🔴 menace confirmée",
+  errRun:"Impossible de lancer le scan : ", errUrl:"Merci de renseigner une URL.",
+ },
+ en: {
+  title:"🛡️ Digital Identity Protection", subtitle:"Free scan · 1 TLD · 25 candidates",
+  navApp:"Client area", statusReady:"READY", statusRunning:"SCANNING", statusDone:"DONE", statusError:"ERROR",
+  step1Title:"1. Test your identity (free)",
+  demoNotice:"Free version: one TLD (.com) only, 25 candidates max, no history or alerts. See the client area for full scheduled monitoring.",
+  lblUrl:"Official URL *", btnRun:"🔍 Run free scan", btnUpgrade:"See plans",
+  kpiCandidates:"Candidates tested", kpiExisting:"Existing domains", kpiSuspects:"Suspicious", kpiAlerts:"Confirmed threats",
+  legendGreenTitle:"🟢 Not registered", legendGreenText:"The candidate does not exist. No active indicator.",
+  legendYellowTitle:"🟡 To monitor", legendYellowText:"The domain exists, no other suspicious signal.",
+  legendOrangeTitle:"🟠 Suspicious", legendOrangeText:"Existing domain + one suspicious signal (certificate, keyword, active DNS).",
+  legendRedTitle:"🔴 Confirmed threat", legendRedText:"High similarity + at least 2 of 3 suspicious signals.",
+  step2Title:"2. Results", thCandidate:"Candidate", thSim:"Similarity", thScore:"Score", thStatus:"Status",
+  upsellTitle:"Need more?",
+  upsellText:"The free version is a one-off scan on .com only. The client area adds scheduled monitoring (cron), history over time, automatic email/Slack alerts, multiple TLDs, whitelisting and PDF export.",
+  btnCreateAccount:"Create an account", btnSeePricing:"See pricing",
+  statusNotRegistered:"🟢 not registered", statusMonitor:"🟡 to monitor", statusSuspect:"🟠 suspicious", statusConfirmed:"🔴 confirmed threat",
+  errRun:"Could not run the scan: ", errUrl:"Please enter a URL.",
+ }
+};
+</script>
+<script src="../assets/common.js"></script>
+<script>
+DIP.init("../");
+
+// ⚠️ À remplacer après création du projet Supabase (Settings > API)
+const SUPABASE_FUNCTIONS_URL = "https://<PROJECT_REF>.supabase.co/functions/v1";
+const SUPABASE_ANON_KEY = "<ANON_KEY>";
+
+function rowHtml(x) {
+ const lang = DIP.getLang();
+ const rdapTxt = x.rdap_exists === true ? "✓" : x.rdap_exists === false ? "—" : "?";
+ const labels = { green: DIP.t("statusNotRegistered"), yellow: DIP.t("statusMonitor"), orange: DIP.t("statusSuspect"), red: DIP.t("statusConfirmed") };
+ return `<tr><td><b>${x.domain}</b></td><td>${rdapTxt}</td><td>${x.has_cert?"✓":"—"}</td><td>${x.dns_resolves?"✓":"—"}</td><td>${x.similarity}%</td><td><span class="badge ${x.level}">${x.score}/100</span></td><td>${labels[x.level]}</td></tr>`;
+}
+
+async function runDemo() {
+ const urlInput = document.getElementById("url").value.trim();
+ if (!urlInput) { alert(DIP.t("errUrl")); return; }
+ document.getElementById("status").textContent = DIP.t("statusRunning");
+ try {
+  const r = await fetch(`${SUPABASE_FUNCTIONS_URL}/scan-demo`, {
+   method: "POST",
+   headers: { "Content-Type": "application/json", "Authorization": `Bearer ${SUPABASE_ANON_KEY}`, "apikey": SUPABASE_ANON_KEY },
+   body: JSON.stringify({ url: urlInput }),
+  });
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || r.statusText);
+
+  document.getElementById("dash").classList.remove("hidden");
+  document.getElementById("candidateCount").textContent = data.candidate_count;
+  document.getElementById("existing").textContent = data.existing_count;
+  document.getElementById("suspects").textContent = data.suspect_count;
+  document.getElementById("alerts").textContent = data.confirmed_count;
+  document.getElementById("results").innerHTML = data.results.map(rowHtml).join("");
+  document.getElementById("status").textContent = DIP.t("statusDone");
+ } catch (e) {
+  alert(DIP.t("errRun") + e.message);
+  document.getElementById("status").textContent = DIP.t("statusError");
+ }
+}
+</script>
+</body>
+</html>
