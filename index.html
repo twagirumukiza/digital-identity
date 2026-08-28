@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Digital Identity Protection — Twagirumukiza</title>
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+.hero{text-align:center;padding:40px 16px 10px}
+.hero h1{font-size:2rem;margin-bottom:8px}
+.hero p{color:var(--muted);max-width:640px;margin:0 auto 22px;font-size:1rem;line-height:1.6}
+.hero .actions{justify-content:center}
+.hero .actions a{display:inline-flex;align-items:center;padding:13px 22px;border-radius:10px;text-decoration:none;font-weight:800;font-size:.9rem}
+.steps4{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:10px}
+.step4{border:1px solid var(--line);border-radius:12px;padding:14px;font-size:.75rem;text-align:center}
+#calCard iframe{width:100%;border:0;min-height:600px;border-radius:12px}
+</style>
+</head>
+<body>
+<header>
+  <a class="brand-link" href="./">
+    <div class="brand">
+      <h1 data-i18n="brandTitle">🛡️ Digital Identity Protection</h1>
+      <small data-i18n="brandBy">par Twagirumukiza</small>
+    </div>
+  </a>
+  <button class="burger" id="burgerBtn" aria-label="Menu" aria-expanded="false">☰</button>
+  <nav class="toolbar" id="toolbar">
+    <a class="tool-btn" href="demo/" data-i18n="navDemo">Scan gratuit</a>
+    <a class="tool-btn" href="app/" data-i18n="navApp">Espace client</a>
+    <a class="tool-btn" href="#pricing" data-i18n="navPricing">Tarifs</a>
+    <a class="tool-btn" href="#contact" data-i18n="navContact">Contact</a>
+    <div class="fontgrp" role="group" aria-label="Taille du texte">
+      <button id="fontMinus">A-</button><button id="fontReset">A</button><button id="fontPlus">A+</button>
+    </div>
+    <button class="tool-btn" id="themeToggle">🌙 Sombre</button>
+    <div class="fontgrp" role="group" aria-label="Langue">
+      <button class="tool-btn" id="langFR">FR</button><button class="tool-btn" id="langEN">EN</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+<section class="hero">
+<h1 data-i18n="heroTitle">Protégez votre identité numérique avant qu'un autre ne s'en serve.</h1>
+<p data-i18n="heroText">Détection des noms de domaine et certificats qui imitent votre marque, avec un scoring à 4 niveaux conçu pour ne pas crier au loup. Surveillance planifiée, historique, alertes automatiques.</p>
+<div class="actions">
+<a class="primary" href="demo/" data-i18n="ctaFree">Essayer gratuitement</a>
+<a class="secondary" href="#contact" data-i18n="ctaCall">Réserver un audit</a>
+</div>
+</section>
+
+<section class="card">
+<h2 style="text-align:center" data-i18n="howTitle">Comment ça marche</h2>
+<div class="steps4">
+<div class="step4"><b>1</b><br data-i18n="how1">Génération de variantes du domaine (typosquatting, homoglyphes)</div>
+<div class="step4"><b>2</b><br data-i18n="how2">Vérification réelle : RDAP, certificats, DNS actif</div>
+<div class="step4"><b>3</b><br data-i18n="how3">Classement à 4 niveaux, rouge réservé aux cas confirmés</div>
+<div class="step4"><b>4</b><br data-i18n="how4">Alerte e-mail/Slack uniquement sur les nouvelles menaces</div>
+</div>
+</section>
+
+<section class="card" id="pricing">
+<h2 style="text-align:center" data-i18n="pricingTitle">Tarifs</h2>
+<div class="pricing" style="margin-top:16px">
+<div class="price-card">
+<h3 data-i18n="tierFreeName">Gratuit</h3>
+<div class="amount">0 € <span data-i18n="perMonth">/ mois</span></div>
+<ul>
+<li data-i18n="freeF1">Scan manuel à la demande</li>
+<li data-i18n="freeF2">1 extension (.com), 25 candidats</li>
+<li data-i18n="freeF3">Aucun historique, aucune alerte</li>
+</ul>
+<div class="actions"><a class="secondary" href="demo/" style="display:inline-flex;align-items:center;padding:11px 15px;border-radius:9px;text-decoration:none;font-weight:800;font-size:.875rem" data-i18n="btnTryFree">Essayer</a></div>
+</div>
+<div class="price-card featured">
+<h3 data-i18n="tierProName">Pro</h3>
+<div class="amount">29 € <span data-i18n="perMonth">/ mois</span></div>
+<ul>
+<li data-i18n="proF1">1 marque surveillée en continu</li>
+<li data-i18n="proF2">Scan hebdomadaire planifié</li>
+<li data-i18n="proF3">Historique + alertes e-mail/Slack</li>
+<li data-i18n="proF4">Plusieurs extensions (.com, .fr, .net…)</li>
+<li data-i18n="proF5">Liste blanche</li>
+</ul>
+<div class="actions"><a class="primary" href="app/" style="display:inline-flex;align-items:center;padding:11px 15px;border-radius:9px;text-decoration:none" data-i18n="btnStart">Commencer</a></div>
+</div>
+<div class="price-card">
+<h3 data-i18n="tierCabinetName">Cabinet</h3>
+<div class="amount">99 € <span data-i18n="perMonth">/ mois</span></div>
+<ul>
+<li data-i18n="cabF1">Jusqu'à 10 marques/clients</li>
+<li data-i18n="cabF2">Scan quotidien planifié</li>
+<li data-i18n="cabF3">Rapport PDF à votre marque</li>
+<li data-i18n="cabF4">Support prioritaire</li>
+</ul>
+<div class="actions"><a class="secondary" href="#contact" style="display:inline-flex;align-items:center;padding:11px 15px;border-radius:9px;text-decoration:none;font-weight:800;font-size:.875rem" data-i18n="btnContactUs">Nous contacter</a></div>
+</div>
+</div>
+<p class="muted" style="text-align:center;margin-top:14px;font-size:.75rem" data-i18n="pricingNote">Tarifs indicatifs, paiement sécurisé par Stripe. Facturation mensuelle, sans engagement.</p>
+</section>
+
+<section class="card" id="contact">
+<h2 style="text-align:center" data-i18n="contactTitle">Réserver un audit</h2>
+<p class="muted" style="text-align:center" data-i18n="contactText">30 minutes pour passer en revue votre exposition actuelle et voir si le forfait Cabinet convient à votre activité de conseil.</p>
+<div id="calCard" style="margin-top:16px">
+<!-- Remplacer <VOTRE-LIEN-CALCOM> par votre lien d'événement Cal.com (ex. cal.com/twagirumukiza/audit) -->
+<iframe src="https://cal.com/<VOTRE-LIEN-CALCOM>?theme=auto" title="Cal.com"></iframe>
+</div>
+</section>
+</main>
+
+<footer>
+  <div class="footer-top">
+    <div class="signature" data-i18n="signature">Conçu et développé par <span>Twagirumukiza</span></div>
+    <div class="footer-links">
+      <a id="linkLegal" data-i18n="linkLegal">Mentions légales</a>
+      <a id="linkCGU" data-i18n="linkCGU">CGU</a>
+      <a id="linkLicense" data-i18n="linkLicense">Licence</a>
+      <a href="https://twagirumukiza.github.io/" target="_blank" rel="noopener">twagirumukiza.github.io</a>
+    </div>
+  </div>
+  <div class="footer-legal" data-i18n="copyright">© 2026 Twagirumukiza. Tous droits réservés.</div>
+</footer>
+
+<div id="legalModals"></div>
+
+<script src="assets/i18n-legal.js"></script>
+<script>
+window.PAGE_I18N = {
+ fr: {
+  brandTitle:"🛡️ Digital Identity Protection", brandBy:"par Twagirumukiza",
+  navDemo:"Scan gratuit", navApp:"Espace client", navPricing:"Tarifs", navContact:"Contact",
+  heroTitle:"Protégez votre identité numérique avant qu'un autre ne s'en serve.",
+  heroText:"Détection des noms de domaine et certificats qui imitent votre marque, avec un scoring à 4 niveaux conçu pour ne pas crier au loup. Surveillance planifiée, historique, alertes automatiques.",
+  ctaFree:"Essayer gratuitement", ctaCall:"Réserver un audit",
+  howTitle:"Comment ça marche",
+  how1:"Génération de variantes du domaine (typosquatting, homoglyphes)",
+  how2:"Vérification réelle : RDAP, certificats, DNS actif",
+  how3:"Classement à 4 niveaux, rouge réservé aux cas confirmés",
+  how4:"Alerte e-mail/Slack uniquement sur les nouvelles menaces",
+  pricingTitle:"Tarifs", perMonth:"/ mois",
+  tierFreeName:"Gratuit", freeF1:"Scan manuel à la demande", freeF2:"1 extension (.com), 25 candidats", freeF3:"Aucun historique, aucune alerte", btnTryFree:"Essayer",
+  tierProName:"Pro", proF1:"1 marque surveillée en continu", proF2:"Scan hebdomadaire planifié", proF3:"Historique + alertes e-mail/Slack", proF4:"Plusieurs extensions (.com, .fr, .net…)", proF5:"Liste blanche", btnStart:"Commencer",
+  tierCabinetName:"Cabinet", cabF1:"Jusqu'à 10 marques/clients", cabF2:"Scan quotidien planifié", cabF3:"Rapport PDF à votre marque", cabF4:"Support prioritaire", btnContactUs:"Nous contacter",
+  pricingNote:"Tarifs indicatifs, paiement sécurisé par Stripe. Facturation mensuelle, sans engagement.",
+  contactTitle:"Réserver un audit", contactText:"30 minutes pour passer en revue votre exposition actuelle et voir si le forfait Cabinet convient à votre activité de conseil.",
+ },
+ en: {
+  brandTitle:"🛡️ Digital Identity Protection", brandBy:"by Twagirumukiza",
+  navDemo:"Free scan", navApp:"Client area", navPricing:"Pricing", navContact:"Contact",
+  heroTitle:"Protect your digital identity before someone else uses it.",
+  heroText:"Detection of domain names and certificates imitating your brand, with a 4-level scoring system designed not to cry wolf. Scheduled monitoring, history, automatic alerts.",
+  ctaFree:"Try for free", ctaCall:"Book an audit",
+  howTitle:"How it works",
+  how1:"Domain variant generation (typosquatting, homoglyphs)",
+  how2:"Real checks: RDAP, certificates, active DNS",
+  how3:"4-level classification, red reserved for confirmed cases",
+  how4:"E-mail/Slack alert only on new threats",
+  pricingTitle:"Pricing", perMonth:"/ month",
+  tierFreeName:"Free", freeF1:"On-demand manual scan", freeF2:"1 TLD (.com), 25 candidates", freeF3:"No history, no alerts", btnTryFree:"Try it",
+  tierProName:"Pro", proF1:"1 brand monitored continuously", proF2:"Scheduled weekly scan", proF3:"History + email/Slack alerts", proF4:"Multiple TLDs (.com, .fr, .net…)", proF5:"Whitelist", btnStart:"Get started",
+  tierCabinetName:"Firm", cabF1:"Up to 10 brands/clients", cabF2:"Scheduled daily scan", cabF3:"White-labeled PDF report", cabF4:"Priority support", btnContactUs:"Contact us",
+  pricingNote:"Indicative pricing, secure payment via Stripe. Monthly billing, no commitment.",
+  contactTitle:"Book an audit", contactText:"30 minutes to review your current exposure and see whether the Firm plan fits your consulting practice.",
+ }
+};
+</script>
+<script src="assets/common.js"></script>
+<script>DIP.init("");</script>
+</body>
+</html>
